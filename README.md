@@ -11,7 +11,7 @@
 \- pm 是基于 /home.php 入口来实现的  
 \- pm 的路径是 /home.php?mod=space&do=pm  
 \- 在 Discuz 中是通过 入口 -> 模块 -> 操作 这样方式来实现功能的;  
-比较 ThinkPHP，ThinkPHP 则是 入口 -> 模块 -> 控制器 -> 操作 的方式来实现。
+比较 ThinkPHP，ThinkPHP 则是 入口 -> 模块 -> 控制器 -> 操作 的方式来实现。  
 \- Discuz 的核心源码位于 source 目录下，比如 home.php 会首先调用这两个文件  
 
 ```

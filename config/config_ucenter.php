@@ -6,9 +6,9 @@ define('UC_CONNECT', 'mysql');
 define('UC_DBHOST', 'localhost');
 define('UC_DBUSER', 'root');
 define('UC_DBPW', 'admin123');
-define('UC_DBNAME', 'ultrax_3.2_20151208');
+define('UC_DBNAME', 'discuz_3.2_20151208');
 define('UC_DBCHARSET', 'utf8');
-define('UC_DBTABLEPRE', '`ultrax_3.2_20151208`.pre_ucenter_');
+define('UC_DBTABLEPRE', '`discuz_3.2_20151208`.pre_ucenter_');
 define('UC_DBCONNECT', 0);
 
 define('UC_CHARSET', 'utf-8');

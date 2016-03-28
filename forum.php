@@ -70,4 +70,8 @@ $navtitle = str_replace('{bbname}', $_G['setting']['bbname'], $_G['setting']['se
 $_G['setting']['threadhidethreshold'] = 1;
 require DISCUZ_ROOT.'./source/module/forum/forum_'.$mod.'.php';
 
+var_dump('$_SESSION', $_SESSION);
+var_dump('$_COOKIE', $_COOKIE);
+var_dump('$_G', $_G);
+
 ?>

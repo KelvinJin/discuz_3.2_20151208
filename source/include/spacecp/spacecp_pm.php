@@ -46,9 +46,15 @@ if($_GET['op'] == 'checknewpm') {
 		$value['lastauthor'] = daddslashes($value['lastauthor']);
 		$value['avatar'] = avatar($value['lastauthorid'], 'small', true);
 		if($value['isnew']) {
-			$json[$value['lastauthorid']] = "$value[lastauthorid]:{'uid':$value[lastauthorid], 'username':'$value[lastauthor]', 'avatar':'$value[avatar]', 'plid':$value[plid], 'isnew':$value[isnew], 'daterange':$value[daterange]}";
+			$json[$value['lastauthorid']] = "$value[lastauthorid]:{'uid':"
+				."$value[lastauthorid], 'username':'$value[lastauthor]', "
+				."'avatar':'$value[avatar]', 'plid':$value[plid], "
+				."'isnew':$value[isnew], 'daterange':$value[daterange]}";
 		} else {
-			$otherpm[$value['lastauthorid']] = "$value[lastauthorid]:{'uid':$value[lastauthorid], 'username':'$value[lastauthor]', 'avatar':'$value[avatar]', 'plid':$value[plid], 'isnew':$value[isnew], 'daterange':$value[daterange]}";
+			$otherpm[$value['lastauthorid']] = "$value[lastauthorid]:{'uid':"
+				."$value[lastauthorid], 'username':'$value[lastauthor]', "
+				."'avatar':'$value[avatar]', 'plid':$value[plid], "
+				."'isnew':$value[isnew], 'daterange':$value[daterange]}";
 		}
 	}
 	if(!empty($otherpm)) {
@@ -87,18 +93,30 @@ if($_GET['op'] == 'checknewpm') {
 	if(!empty($_GET['tradeid'])) {
 		$trade = C::t('forum_trade')->fetch_goods(0, $_GET['tradeid']);
 		if($trade) {
-			$messageappend = dhtmlspecialchars('[url='.$_G['siteurl'].'forum.php?mod=viewthread&tid='.$trade['tid'].'&do=tradeinfo&pid='.$trade['pid'].'][b]'.$trade['subject'].'[/b][/url]');
+			$messageappend = dhtmlspecialchars('[url='.$_G['siteurl']
+				.'forum.php?mod=viewthread&tid='.$trade['tid']
+				.'&do=tradeinfo&pid='.$trade['pid']
+				.'][b]'.$trade['subject'].'[/b][/url]');
 		}
 	} elseif(!empty($_GET['commentid'])) {
 		$comment = C::t('forum_postcomment')->fetch($_GET['commentid']);
 		if($comment) {
-			$comment['comment'] = str_replace(array('[b]', '[/b]', '[/color]'), array(''), preg_replace("/\[color=([#\w]+?)\]/i", '', strip_tags($comment['comment'])));
-			$messageappend = dhtmlspecialchars('[url='.$_G['siteurl'].'forum.php?mod=redirect&goto=findpost&pid='.$comment['pid'].'&ptid='.$comment['tid'].'][b]'.lang('spacecp', 'pm_comment').'[/b][/url][quote]'.$comment['comment'].'[/quote]');
+			$comment['comment'] = str_replace(array('[b]', '[/b]', '[/color]'), 
+				array(''), preg_replace("/\[color=([#\w]+?)\]/i", '', 
+					strip_tags($comment['comment'])));
+			$messageappend = dhtmlspecialchars('[url='.$_G['siteurl'].
+				'forum.php?mod=redirect&goto=findpost&pid='.$comment['pid'].
+				'&ptid='.$comment['tid'].'][b]'.lang('spacecp', 'pm_comment').
+				'[/b][/url][quote]'.$comment['comment'].'[/quote]');
 		}
 	} elseif(!empty($_GET['tid']) && !empty($_GET['pid'])) {
 		$thread = C::t('forum_thread')->fetch($_GET['tid']);
 		if($thread) {
-			$messageappend = dhtmlspecialchars('[url='.$_G['siteurl'].'forum.php?mod=redirect&goto=findpost&pid='.intval($_GET['pid']).'&ptid='.$thread['tid'].'][b]'.lang('spacecp', 'pm_thread_about', array('subject' => $thread['subject'])).'[/b][/url]');
+			$messageappend = dhtmlspecialchars('[url='.$_G['siteurl'].
+				'forum.php?mod=redirect&goto=findpost&pid='.intval($_GET['pid']).
+				'&ptid='.$thread['tid'].'][b]'.lang('spacecp', 
+					'pm_thread_about', 
+					array('subject' => $thread['subject'])).'[/b][/url]');
 		}
 	}
 
@@ -106,7 +124,8 @@ if($_GET['op'] == 'checknewpm') {
 	$perpage = 50;
 	$perpage = mob_perpage($perpage);
 	$page = empty($_GET['page']) ? ceil($count/$perpage) : intval($_GET['page']);
-	$list = uc_pm_view($_G['uid'], 0, $plid, 5, ceil($count/$perpage)-$page+1, $perpage, 1, 1);
+	$list = uc_pm_view($_G['uid'], 0, $plid, 5, 
+		ceil($count/$perpage)-$page+1, $perpage, 1, 1);
 
 } elseif($_GET['op'] == 'delete') {
 
@@ -120,7 +139,8 @@ if($_GET['op'] == 'checknewpm') {
 	$delplid = is_array($_GET['deletepm_delplid']) ? $_GET['deletepm_delplid'] : 0;
 	$quitplid = is_array($_GET['deletepm_quitplid']) ? $_GET['deletepm_quitplid'] : 0;
 
-	if(empty($gpmid) && empty($deluid) && empty($delpmid) && empty($delplid) && empty($quitplid)) {
+	if(empty($gpmid) && empty($deluid) && empty($delpmid) 
+		&& empty($delplid) && empty($quitplid)) {
 		showmessage('delete_pm_error_option');
 	}
 
@@ -128,7 +148,8 @@ if($_GET['op'] == 'checknewpm') {
 		$flag = true;
 
 		if(!empty($gpmid)) {
-			$return = C::t('common_member_grouppm')->update($_G['uid'], $gpmid, array('status' => -1));
+			$return = C::t('common_member_grouppm')->update($_G['uid'], 
+				$gpmid, array('status' => -1));
 			$returnurl = 'home.php?mod=space&do=pm&filter=announcepm';
 			if(!$return) {
 				$flag = false;
@@ -205,16 +226,21 @@ if($_GET['op'] == 'checknewpm') {
 
 		!($_G['group']['exempt'] & 1) && checklowerlimit('sendpm', 0, $coef);
 
-		$message = (!empty($_POST['messageappend']) ? $_POST['messageappend']."\n" : '').trim($_POST['message']);
+		$message = (!empty($_POST['messageappend']) ? 
+			$_POST['messageappend']."\n" : '').trim($_POST['message']);
 		if(empty($message)) {
 			showmessage('unable_to_send_air_news', '', array(), array('return' => true));
 		}
 		$message = censor($message);
 		loadcache(array('smilies', 'smileytypes'));
 		foreach($_G['cache']['smilies']['replacearray'] AS $key => $smiley) {
-			$_G['cache']['smilies']['replacearray'][$key] = '[img]'.$_G['siteurl'].'static/image/smiley/'.$_G['cache']['smileytypes'][$_G['cache']['smilies']['typearray'][$key]]['directory'].'/'.$smiley.'[/img]';
+			$_G['cache']['smilies']['replacearray'][$key] = '[img]'.$_G['siteurl']
+				.'static/image/smiley/'
+				.$_G['cache']['smileytypes'][$_G['cache']['smilies']['typearray'][$key]]['directory'].
+				'/'.$smiley.'[/img]';
 		}
-		$message = preg_replace($_G['cache']['smilies']['searcharray'], $_G['cache']['smilies']['replacearray'], $message);
+		$message = preg_replace($_G['cache']['smilies']['searcharray'], 
+			$_G['cache']['smilies']['replacearray'], $message);
 		$subject = '';
 		if($type == 1) {
 			$subject = dhtmlspecialchars(trim($_POST['subject']));
@@ -225,11 +251,15 @@ if($_GET['op'] == 'checknewpm') {
 		if($touid || $pmid) {
 			if($touid) {
 				if(($value = getuserbyuid($touid))) {
-					$value['onlyacceptfriendpm'] = $value['onlyacceptfriendpm'] ? $value['onlyacceptfriendpm'] : ($_G['setting']['onlyacceptfriendpm'] ? 1 : 2);
-					if($_G['group']['allowsendallpm'] || $value['onlyacceptfriendpm'] == 2 || ($value['onlyacceptfriendpm'] == 1 && friend_check($touid))) {
+					$value['onlyacceptfriendpm'] = $value['onlyacceptfriendpm'] ? 
+					$value['onlyacceptfriendpm'] : 
+					($_G['setting']['onlyacceptfriendpm'] ? 1 : 2);
+					if($_G['group']['allowsendallpm'] || $value['onlyacceptfriendpm'] == 2 
+						|| ($value['onlyacceptfriendpm'] == 1 && friend_check($touid))) {
 						$return = sendpm($touid, $subject, $message, '', 0, 0, $type);
 					} else {
-						showmessage('message_can_not_send_onlyfriend', '', array(), array('return' => true));
+						showmessage('message_can_not_send_onlyfriend', '', 
+							array(), array('return' => true));
 					}
 				} else {
 					showmessage('message_bad_touid', '', array(), array('return' => true));
@@ -251,22 +281,28 @@ if($_GET['op'] == 'checknewpm') {
 				showmessage('message_bad_touser', '', array(), array('return' => true));
 			}
 			if(isset($membersarr[$_G['uid']])) {
-				showmessage('message_can_not_send_to_self', '', array(), array('return' => true));
+				showmessage('message_can_not_send_to_self', '', 
+					array(), array('return' => true));
 			}
 
 			friend_check($uidsarr);
 
 			foreach($membersarr as $key => $value) {
 
-				$value['onlyacceptfriendpm'] = $value['onlyacceptfriendpm'] ? $value['onlyacceptfriendpm'] : ($_G['setting']['onlyacceptfriendpm'] ? 1 : 2);
-				if($_G['group']['allowsendallpm'] || $value['onlyacceptfriendpm'] == 2 || ($value['onlyacceptfriendpm'] == 1 && $_G['home_friend_'.$value['uid'].'_'.$_G['uid']])) {
+				$value['onlyacceptfriendpm'] = $value['onlyacceptfriendpm'] 
+				? $value['onlyacceptfriendpm'] : ($_G['setting']['onlyacceptfriendpm'] 
+					? 1 : 2);
+				if($_G['group']['allowsendallpm'] || $value['onlyacceptfriendpm'] == 2 
+					|| ($value['onlyacceptfriendpm'] == 1 
+						&& $_G['home_friend_'.$value['uid'].'_'.$_G['uid']])) {
 					$newusers[$value['uid']] = $value['username'];
 					unset($users[array_search($value['username'], $users)]);
 				}
 			}
 
 			if(empty($newusers)) {
-				showmessage('message_can_not_send_onlyfriend', '', array(), array('return' => true));
+				showmessage('message_can_not_send_onlyfriend', '', array(), 
+					array('return' => true));
 			}
 
 			foreach($newusers as $key=>$value) {
@@ -275,7 +311,8 @@ if($_GET['op'] == 'checknewpm') {
 				}
 			}
 			$coef = count($newusers);
-			$return = sendpm(implode(',', $newusers), $subject, $message, '', 0, 1, $type);
+			$return = sendpm(implode(',', $newusers), $subject, $message, '', 
+				0, 1, $type);
 		} else {
 			showmessage('message_can_not_send_9', '', array(), array('return' => true));
 		}
@@ -284,20 +321,29 @@ if($_GET['op'] == 'checknewpm') {
 			include_once libfile('function/stat');
 			updatestat('sendpm', 0, $coef);
 
-			C::t('common_member_status')->update($_G['uid'], array('lastpost' => TIMESTAMP));
-			!($_G['group']['exempt'] & 1) && updatecreditbyaction('sendpm', 0, array(), '', $coef);
+			C::t('common_member_status')->update($_G['uid'], 
+				array('lastpost' => TIMESTAMP));
+			!($_G['group']['exempt'] & 1) && updatecreditbyaction('sendpm', 
+				0, array(), '', $coef);
 			if(!empty($newusers)) {
 				if($type == 1) {
 					$returnurl = 'home.php?mod=space&do=pm&filter=privatepm';
 				} else {
 					$returnurl = 'home.php?mod=space&do=pm';
 				}
-				showmessage(count($users) ? 'message_send_result' : 'do_success', $returnurl, array('users' => implode(',', $users), 'succeed' => count($newusers)));
+				showmessage(count($users) ? 'message_send_result' : 'do_success', 
+					$returnurl, array('users' => implode(',', $users), 
+						'succeed' => count($newusers)));
 			} else {
 				if(!defined('IN_MOBILE')) {
-					showmessage('do_success', 'home.php?mod=space&do=pm&subop=view&touid='.$touid, array('pmid' => $return), $_G['inajax'] ? array('msgtype' => 3, 'showmsg' => false) : array());
+					showmessage('do_success', 'home.php?mod=space&do=pm&subop=view&touid='
+						.$touid, array('pmid' => $return), $_G['inajax'] ? 
+						array('msgtype' => 3, 'showmsg' => false) : array());
 				} else {
-					showmessage('do_success', 'home.php?mod=space&do=pm&subop=view'.(intval($_POST['touid']) ? '&touid='.intval($_POST['touid']) : ( intval($_POST['plid']) ? '&plid='.intval($_POST['plid']).'&daterange=1&type=1' : '' )));
+					showmessage('do_success', 'home.php?mod=space&do=pm&subop=view'
+						.(intval($_POST['touid']) ? '&touid='.intval($_POST['touid']) 
+							: ( intval($_POST['plid']) ? '&plid='.intval($_POST['plid'])
+								.'&daterange=1&type=1' : '' )));
 				}
 
 			}
@@ -316,18 +362,22 @@ if($_GET['op'] == 'checknewpm') {
 		$single = intval($_GET['single']);
 		if($single) {
 			uc_pm_blackls_add($_G['uid'], $_POST['ignoreuser']);
-			showmessage('do_success', dreferer(), array(), array('showdialog'=>1, 'showmsg' => true, 'closetime' => true));
+			showmessage('do_success', dreferer(), array(), array('showdialog'=>1, 
+				'showmsg' => true, 'closetime' => true));
 		} else {
 			uc_pm_blackls_set($_G['uid'], $_POST['ignorelist']);
-			showmessage('do_success', 'home.php?mod=space&do=pm&view=ignore', array(), array('showdialog'=>1, 'showmsg' => true, 'closetime' => true));
+			showmessage('do_success', 'home.php?mod=space&do=pm&view=ignore', 
+				array(), array('showdialog'=>1, 'showmsg' => true, 'closetime' => true));
 		}
 	}
 
 } elseif($_GET['op'] == 'setting') {
 
 	if(submitcheck('settingsubmit')) {
-		if(!(intval($_GET['onlyacceptfriendpm']) && intval($_GET['onlyacceptfriendpm']) == $_GET['onlyacceptfriendpm'])) {
-			showmessage('pm_onlyacceptfriend_error', 'home.php?mod=space&do=pm&subop=setting');
+		if(!(intval($_GET['onlyacceptfriendpm']) && 
+			intval($_GET['onlyacceptfriendpm']) == $_GET['onlyacceptfriendpm'])) {
+			showmessage('pm_onlyacceptfriend_error', 
+				'home.php?mod=space&do=pm&subop=setting');
 		}
 
 		uc_pm_blackls_set($_G['uid'], $_POST['ignorelist']);
@@ -342,7 +392,8 @@ if($_GET['op'] == 'checknewpm') {
 
 	$waittime = interval_check('post');
 	if($waittime > 0) {
-		showmessage('operating_too_fast', '', array('waittime' => $waittime), array('return' => true));
+		showmessage('operating_too_fast', '', 
+			array('waittime' => $waittime), array('return' => true));
 	}
 
 	if(!$pmid) {
@@ -362,17 +413,23 @@ if($_GET['op'] == 'checknewpm') {
 			showmessage('pm_report_error_nopmreportuser');
 		}
 
-		$pmreportcontent = lang('spacecp', 'pm_report_content', array('reporterid' => $_G['uid'], 'reportername' => $_G['username'], 'uid' => $pm['authorid'], 'username' => $pm['author'], 'message' => $pm['message']));
+		$pmreportcontent = lang('spacecp', 'pm_report_content', 
+			array('reporterid' => $_G['uid'], 'reportername' => $_G['username'], 
+				'uid' => $pm['authorid'], 'username' => $pm['author'], 
+				'message' => $pm['message']));
 		foreach($pmreportuser as $key => $value) {
-			notification_add($value, 'pmreport', 'pmreportcontent', array('pmreportcontent' => $pmreportcontent), 0);
+			notification_add($value, 'pmreport', 'pmreportcontent', 
+				array('pmreportcontent' => $pmreportcontent), 0);
 		}
-		showmessage('do_success', dreferer(), array(), array('showdialog'=>1, 'showmsg' => true, 'closetime' => true));
+		showmessage('do_success', dreferer(), array(), array('showdialog'=>1, 
+			'showmsg' => true, 'closetime' => true));
 	}
 
 } elseif($_GET['op'] == 'pm_ignore') {
 	$waittime = interval_check('post');
 	if($waittime > 0) {
-		showmessage('operating_too_fast', '', array('waittime' => $waittime), array('return' => true));
+		showmessage('operating_too_fast', '', 
+			array('waittime' => $waittime), array('return' => true));
 	}
 	$username = $_GET['username'];
 	if(!$username) {
@@ -381,7 +438,8 @@ if($_GET['op'] == 'checknewpm') {
 
 	if(submitcheck('pmignoresubmit')) {
 		uc_pm_blackls_add($_G['uid'], addslashes($username));
-		showmessage('do_success', dreferer(), array(), array('showdialog'=>1, 'showmsg' => true, 'closetime' => true));
+		showmessage('do_success', dreferer(), array(), 
+			array('showdialog'=>1, 'showmsg' => true, 'closetime' => true));
 	}
 
 } elseif($_GET['op'] == 'kickmember') {
@@ -392,7 +450,9 @@ if($_GET['op'] == 'checknewpm') {
 	}
 	if(submitcheck('pmkickmembersubmit')) {
 		uc_pm_kickchatpm($plid, $_G['uid'], $memberuid);
-		showmessage('do_success', dreferer(), array(), array('showdialog'=>1, 'showmsg' => true, 'closetime' => true, 'locationtime' => 3));
+		showmessage('do_success', dreferer(), array(), 
+			array('showdialog'=>1, 'showmsg' => true, 
+				'closetime' => true, 'locationtime' => 3));
 	}
 
 } elseif($_GET['op'] == 'appendmember') {
@@ -400,7 +460,8 @@ if($_GET['op'] == 'checknewpm') {
 	$memberusername = trim($_GET['memberusername']);
 	$members = array();
 	if($memberusername) {
-		$members = C::t('common_member')->fetch_all_by_username(explode(',', $memberusername));
+		$members = C::t('common_member')
+		->fetch_all_by_username(explode(',', $memberusername));
 	}
 	if(empty($members)) {
 		showmessage('pm_appendkmember_error_nopm');
@@ -409,26 +470,39 @@ if($_GET['op'] == 'checknewpm') {
 		include_once libfile('function/friend');
 		$returns = array();
 		foreach($members as $member) {
-			$member['onlyacceptfriendpm'] = $member['onlyacceptfriendpm'] ? $member['onlyacceptfriendpm'] : ($_G['setting']['onlyacceptfriendpm'] ? 1 : 2);
-			if($_G['group']['allowsendallpm'] || $member['onlyacceptfriendpm'] == 2 || ($member['onlyacceptfriendpm'] == 1 && friend_check($member['uid']))) {
+			$member['onlyacceptfriendpm'] = $member['onlyacceptfriendpm'] 
+			? $member['onlyacceptfriendpm'] : ($_G['setting']['onlyacceptfriendpm'] 
+				? 1 : 2);
+			if($_G['group']['allowsendallpm'] || $member['onlyacceptfriendpm'] == 2 
+				|| ($member['onlyacceptfriendpm'] == 1 
+					&& friend_check($member['uid']))) {
 				$return = uc_pm_appendchatpm($plid, $_G['uid'], $member['uid']);
-				$returns[] = array('uid' => $member['uid'], 'username' => $member['username'], 'return' => $return);
+				$returns[] = array('uid' => $member['uid'], 
+					'username' => $member['username'], 'return' => $return);
 			} else {
-				$returns[] = array('uid' => $member['uid'], 'username' => $member['username'], 'return' => 0);
+				$returns[] = array('uid' => $member['uid'], 
+					'username' => $member['username'], 
+					'return' => 0);
 			}
 		}
 		$cannotappend = array();
 		foreach($returns as $value) {
 			if($value['return'] < 0) {
-				$cannotappend[] = $value['username'].'('.lang('spacecp', 'message_can_not_send_'.abs($value['return'])).')';
+				$cannotappend[] = $value['username'].'('.lang('spacecp', 
+					'message_can_not_send_'.abs($value['return'])).')';
 			} elseif($value['return'] == 0) {
-				$cannotappend[] = $value['username'].'('.lang('spacecp', 'message_can_not_send_onlyfriend').')';
+				$cannotappend[] = $value['username'].'('.lang('spacecp', 
+					'message_can_not_send_onlyfriend').')';
 			}
 		}
 		if(empty($cannotappend)) {
-			showmessage('do_success', dreferer(), array(), array('showdialog'=>1, 'showmsg' => true, 'closetime' => true, 'locationtime' => 3));
+			showmessage('do_success', dreferer(), array(), array('showdialog'=>1, 
+				'showmsg' => true, 'closetime' => true, 'locationtime' => 3));
 		} else {
-			showmessage('message_can_not_append_reason', dreferer(), array('cannotappend' => implode('<br />', $cannotappend)), array('showdialog'=>1, 'showmsg' => true, 'closetime' => true, 'locationtime' => 5));
+			showmessage('message_can_not_append_reason', dreferer(), 
+				array('cannotappend' => implode('<br />', $cannotappend)), 
+				array('showdialog'=>1, 'showmsg' => true, 'closetime' => true, 
+					'locationtime' => 5));
 		}
 	}
 
@@ -438,7 +512,8 @@ if($_GET['op'] == 'checknewpm') {
 	$plids = trim($_GET['plids']);
 	if($gpmids) {
 		$gpmidarr = explode(',', $gpmids);
-		C::t('common_member_grouppm')->update_to_read_by_unread($_G['uid'], $gpmidarr);
+		C::t('common_member_grouppm')
+		->update_to_read_by_unread($_G['uid'], $gpmidarr);
 	}
 	if($plids) {
 		$plidarr = explode(',', $plids);
@@ -478,29 +553,38 @@ if($_GET['op'] == 'checknewpm') {
 			$filename = $touser[1].'.html';
 		}
 	}
-	$contents = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
+	$contents = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'.
+	' "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
 	$contents .= '<html xmlns="http://www.w3.org/1999/xhtml">';
-	$contents .= '<head><meta http-equiv="Content-Type" content="text/html; charset='.CHARSET.'" /><title>'.lang('space', 'pm_export_header').'</title></head>';
+	$contents .= '<head><meta http-equiv="Content-Type" '
+	.'content="text/html; charset='.CHARSET.'" /><title>'
+	.lang('space', 'pm_export_header').'</title></head>';
 	$contents .= '<body>';
 	$contents .= lang('space', 'pm_export_header');
 	$contents .= "\r\n\r\n================================================================\r\n";
 	if($touser) {
-		$contents .= lang('space', 'pm_export_touser', array('touser' => '<a href="'.$_G['siteurl'].'home.php?mod=space&uid='.$touser[0].'">'.$touser[1].'</a>'));
+		$contents .= lang('space', 'pm_export_touser', 
+			array('touser' => '<a href="'.$_G['siteurl']
+				.'home.php?mod=space&uid='.$touser[0].'">'.$touser[1].'</a>'));
 		$contents .= "\r\n================================================================\r\n";
 	} elseif($subject) {
-		$contents .= lang('space', 'pm_export_subject', array('subject' => $subject));
+		$contents .= lang('space', 'pm_export_subject', 
+			array('subject' => $subject));
 		$contents .= "\r\n================================================================\r\n";
 	}
 	$contents .= "\r\n";
 	foreach($list as $key => $val) {
 		$contents .= $val['author']."\t".dgmdate($val['dateline'])."\r\n";
-		$contents .= str_replace(array('<br>', '<br />', '&nbsp;'), array("\r\n", "\r\n", ' '), $val['message'])."\r\n\r\n";
+		$contents .= str_replace(array('<br>', '<br />', '&nbsp;'), 
+			array("\r\n", "\r\n", ' '), $val['message'])."\r\n\r\n";
 	}
 	$contents .= '</body></html>';
 	$contents = nl2br($contents);
 
 	$filesize = strlen($contents);
-	$filename = '"'.(strtolower(CHARSET) == 'utf-8' && strexists($_SERVER['HTTP_USER_AGENT'], 'MSIE') ? urlencode($filename) : $filename).'"';
+	$filename = '"'.(strtolower(CHARSET) == 'utf-8' 
+		&& strexists($_SERVER['HTTP_USER_AGENT'], 'MSIE') 
+		? urlencode($filename) : $filename).'"';
 
 	dheader('Date: '.gmdate('D, d M Y H:i:s', $val['dateline']).' GMT');
 	dheader('Last-Modified: '.gmdate('D, d M Y H:i:s', $val['dateline']).' GMT');
